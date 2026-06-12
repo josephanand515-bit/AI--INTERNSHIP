@@ -1,0 +1,17 @@
+from google import genai
+from google.genai import types
+
+client = genai.Client(api_key="***********"
+
+chat = client.chats.create(
+    model="gemini-2.5-flash",
+    config=types.GenerateContentConfig(
+        system_instruction="You are an ai model."
+    )
+)
+
+response = chat.send_message(
+    "Write about the impact of ai in healthcare."
+)
+
+print(response.text)
