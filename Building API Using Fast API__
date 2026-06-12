@@ -1,0 +1,15 @@
+import requests
+
+username = input("Github username: ")
+
+# Get josephanand515-bit info from Github
+
+user = requests.get(f"https://api.github.com/users/{username}")
+
+user_details = user.json()
+
+public_repo = user_details["public_repos"]
+
+followers = user_details["followers"]
+following = user_details["following"]
+print(f"Hi, Im {username}, I have {public_repo} repo in my github account")
