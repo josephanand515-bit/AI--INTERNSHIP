@@ -1,0 +1,97 @@
+from ollama import chat
+
+MODEL = "mistral"
+
+SYSTEM_PROMPT = """  You are a debate coach. When given a topic and a side, generate exactly 3 strong arguments.
+
+Format your response exactly like this:
+
+ARGUMENT 1: [title]
+[2-3 sentence explanation with a real-world example]
+
+ARGUMENT 2: [title]
+[2-3 sentence explanation with a real-world example]
+
+ARGUMENT 3: [title]
+[2-3 sentence explanation with a real-world example]
+
+Be persuasive, logical, and always use real-world examples
+
+"""
+
+# choose the side - Function
+def get_side_choice():
+
+    print("\n Pick a Side for Debate:")
+    print(" 1. FOR")
+    print(" 2. AGAINST")
+
+    while True:
+
+        choice = input("Enter 1 or 2: "). strip()
+
+        if choice == "1":
+
+            return "FOR"
+        elif choice == "2":
+
+            return "AGAINST"
+
+        else: 
+            print("Invalid Choice. Enter 1 or 2.")
+
+def generate_arguments(topic, side):
+
+    user_message = f"Topic: {topic}\n Side: {side}\n Generate 3 strong arguments"
+
+    messages = [
+        {
+            "role": "system", "content": SYSTEM_PROMPT
+        },
+        {
+            "role": "user", "content": user_message
+        }
+    ]
+
+    print(f"\n ---- Arguments {side}: '{topic}' ---- \n")
+    response = chat(
+        model = MODEL,
+        messages=messages,
+        stream = True
+    )
+
+    for chunk in response: 
+
+        print(chunk['message']["content"], end="", flush=True)
+
+    print("\n")
+
+
+def main():
+
+    print(" === Debate Argument Generator ===")
+    print(" Type a topic, Type 'quit' to exit. ")
+
+    while True:
+
+        user_input = input("You: ").strip()
+
+        if not user_input:
+            continue
+
+        if user_input == "quit":
+            print("Bye, Let's catch up later")
+            break
+
+        side = get_side_choice()
+
+        generate_arguments(user_input, side)
+
+        again = input("Try another topic? (y/n): ").strip().lower()
+
+        if again != "y":
+
+            print("Take Care, Have a great day")
+
+            break
+        print
