@@ -1,0 +1,46 @@
+from ollama import chat
+
+MODEL = "gemma4:e2b"
+
+SYSTEM_PROMPT = """ You are a helpful assistant. Be concise and clear in your response. Explain with example
+"""
+
+def main():
+
+    print("=== Local AI ChatBot === \n")
+    print("Type a message. Type 'quit' to exit. \n")
+
+    while True:
+
+        user_input = input("You: ").strip()
+
+        if not user_input:
+            continue
+
+        if user_input == "quit":
+            print("Bye, Let's catch up later")
+            break
+
+        messages = [
+            {
+                "role": "system", "content": SYSTEM_PROMPT, # used for rules
+                "role": "user", "content": user_input,
+            }
+        ]
+
+        print("AI: ", end="", flush=True)
+
+        response = chat(
+            model = MODEL,
+            messages = messages,
+            stream = True
+        )
+
+        for chunk in response:
+
+            print(chunk["message"]["content"], end="", flush=True)
+
+        print("\n")
+
+if __name__ == "__main__":
+    main()
