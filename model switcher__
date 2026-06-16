@@ -1,0 +1,84 @@
+from ollama import chat, ResponseError
+
+MODELS = [
+    "gemma4:e2b",
+    "mistral"
+]
+
+SYSTEM_PROMPT = "You are a helpful assistant. Keep your answer under 5 sentences"
+
+def ask_model(model, question):
+
+    messages = [
+        {
+            "role": "system", "content": SYSTEM_PROMPT
+        },
+        {
+            "role": "user", "content": question
+        }
+    ]
+
+    try:
+
+        response = chat(
+        model = model,
+        messages=messages,
+        stream = True
+        )
+
+        for chunk in response: 
+
+            print(chunk['message']["content"], end="", flush=True)
+
+        print("\n")
+
+    except ResponseError as e:
+
+        if "not found" in str(e).lower():
+
+            print(f"Model not downloaded. Run: ollama pull {model}")
+        else:
+
+            print(f"[Model error: {e}]")
+
+    except ConnectionError:
+
+        print("Ollama not running. Start it with Ollama: server")
+
+        raise SystemExit[1]
+
+    except Exception as e:
+
+        print(f"Unexpected error: {e}")
+
+def main():
+    print("=== Model Switcher — Compare AI Models ===")
+    print(f"Models: {', '.join(MODELS)}")
+    print("Type a question. Type 'quit' to exit.\n")
+
+    while True:
+        question = input("Your question: ").strip()
+
+        if not question:
+            continue
+
+        if question.lower() == "quit":
+            print("Bye!")
+            break
+
+        print()
+        for model in MODELS:
+            print(f"── {model} ──")
+            ask_model(model, question)
+            print()
+
+        again = input("Ask another question? (y/n): ").strip().lower()
+        if again != "y":
+            print("Bye!")
+            break
+
+        print()
+
+
+if __name__ == "__main__":
+    main()
